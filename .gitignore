@@ -1,1 +1,4 @@
-errors/*
+errors
+sessions
+databases
+
