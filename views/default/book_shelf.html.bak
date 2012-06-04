@@ -1,0 +1,20 @@
+{{extend 'mylayout.html'}}
+<h1>You book shelves!</h1>
+{{if len(shelves):}}
+    {{for shelf in shelves:}}
+        {{=shelf.Shelf_Name}}
+    {{pass}}
+
+{{extend 'layout.html'}}
+<h1>{{=shelf.Shelf_Name}}</h1>
+{{=form}}
+
+{{if len(books):}}
+	{{for book in books:}}
+		<p>{{=book.id}}</p>
+	{{pass}}
+{{else:}}
+	No books
+{{pass}}
+	
+

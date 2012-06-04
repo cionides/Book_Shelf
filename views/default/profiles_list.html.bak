@@ -1,0 +1,8 @@
+{{extend 'mylayout.html'}}
+{{if len(profiles):}}
+    {{for profile in profiles:}}
+        <p>{{=profile.name}}</p>
+    {{pass}}
+{{else:}}
+    <p>No users registered</p>
+{{pass}}

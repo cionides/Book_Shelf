@@ -1,0 +1,12 @@
+{{extend 'mylayout.html'}}
+
+<h1>{{=shelf.Shelf_Name}}</h1>
+<p>{{=A('Add Book to Bookshelf', _href=URL('update_book_shelf', args=shelf.id))}}</p>
+
+{{if len(books):}}
+    {{for book in books:}}
+        <p>{{=book.id}}</p>
+    {{pass}}
+{{else:}}
+    <p>No books</p>
+{{pass}}

@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<title>{{=response.title or request.application}}</title>
+<link rel="stylesheet" type="text/css" href="{{=URL('static', 'plugin_layout_book_store/style.css')}}" />
+{{include "web2py_ajax.html"}}
+</head>
+
+<body>
+<div id="wrap">
+       <div class="header">
+       		<div class="logo"><a href="index.html"><img src="{{=URL('static', 'plugin_layout_book_store/images/logo.gif')}}" alt="" title="" border="0" /></a></div> 
+       		<div id="navbar">{{='auth' in globals() and auth.navbar(separators=(' ',' | ',''))}}</div>           
+        <div id="menu">
+            {{=MENU(response.menu)}}
+        </div>     
+          <!-- end #menu -->  
+        </div> 
+		<!-- end #header -->
+	   <div class="flash">{{=response.flash or ''}}</div>
+       <div class="center_content">
+			{{include}}	
+       <div class="left_content"> </div>    
+       <div class="clear"></div>
+   </div>
+        <!-- end #center content -->    
+            
+        <div class="clear"></div>
+        </div><!--end of left content-->
+        
+        <div class="right_content">
+        </div><!--end of right content-->
+       <div class="clear"></div>
+       </div><!--end of center content-->
+       
+              
+      
+</div>
+<!-- end #wrap -->
+</body>
+</html>

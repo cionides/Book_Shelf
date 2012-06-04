@@ -1,0 +1,34 @@
+{{extend 'mylayout.html'}}
+
+<div class="left_content">
+
+<div class="title"><span class="title_icon"><img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" /></span>Books</div>
+
+{{if len(books):}}
+	{{for book in books:}}
+	<div class="feat_prod_box">
+		<div class="prod_img">
+			<a href="{{=URL('book_profile', args=book.id)}}">
+			<img width="100" src="{{=book.Picture and URL('download', args=book.Picture) or URL('static','plugin_layout_book_store/images/dummy_book.png')}}" alt="" title="" border="0" />
+			</a>
+		</div>
+		
+		<div class="prod_det_box">
+			<div class="box_top"></div>
+			<div class="box_center">
+			<div class="prod_title">{{=book.Title}}</div>
+			<p class="details">Author: {{=book.Author}}<br />
+							{{=book.Details}}</p>
+            <a href="{{=URL('book_profile', args=book.id)}}" class="more">- more details -</a>
+			<div class="clear"></div>
+			</div>
+			<div class="box_bottom"></div>
+		</div>
+	<div class="clear"></div>
+	</div>
+	{{pass}}
+{{else:}}
+No Books 
+{{pass}}
+
+</div>

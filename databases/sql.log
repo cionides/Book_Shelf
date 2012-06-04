@@ -1,0 +1,189 @@
+timestamp: 2012-05-18T16:53:04.120461
+CREATE TABLE auth_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name CHAR(128),
+    last_name CHAR(128),
+    email CHAR(512),
+    password CHAR(512),
+    registration_key CHAR(512),
+    reset_password_key CHAR(512),
+    registration_id CHAR(512)
+);
+success!
+timestamp: 2012-05-18T16:53:04.125783
+CREATE TABLE auth_group(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2012-05-18T16:53:04.132013
+CREATE TABLE auth_membership(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    group_id INTEGER REFERENCES auth_group(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-05-18T16:53:04.137502
+CREATE TABLE auth_permission(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER REFERENCES auth_group(id) ON DELETE CASCADE,
+    name CHAR(512),
+    table_name CHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2012-05-18T16:53:04.145254
+CREATE TABLE auth_event(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    time_stamp TIMESTAMP,
+    client_ip CHAR(512),
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    origin CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2012-05-18T16:53:04.155044
+CREATE TABLE auth_cas(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    created_on TIMESTAMP,
+    service CHAR(512),
+    ticket CHAR(512),
+    renew CHAR(1)
+);
+success!
+timestamp: 2012-05-18T16:53:58.843560
+CREATE TABLE Book_Profile(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Title CHAR(512),
+    Author CHAR(512),
+    Genre CHAR(512),
+    Publisher CHAR(512),
+    Publisher_Date CHAR(512),
+    Link_to_Buy CHAR(512),
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-05-18T16:53:58.850249
+CREATE TABLE User_Profile(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name CHAR(512),
+    Favorite_Book CHAR(512),
+    Bio TEXT,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-05-18T16:53:58.855386
+CREATE TABLE Book_Shelf(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Shelf_Name CHAR(512),
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-05-18T16:53:58.860888
+CREATE TABLE Book_Shelf_Items(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Book_Shelf_id INTEGER REFERENCES Book_Shelf(id) ON DELETE CASCADE,
+    Book_Profile_id INTEGER REFERENCES Book_Profile(id) ON DELETE CASCADE,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-05-18T16:53:58.865413
+CREATE TABLE Comments(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Book_Profile_id INTEGER REFERENCES Book_Profile(id) ON DELETE CASCADE,
+    body TEXT,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-05-18T16:53:58.871091
+CREATE TABLE Reviews(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Book_Profile_id INTEGER REFERENCES Book_Profile(id) ON DELETE CASCADE,
+    body TEXT,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-05-18T17:29:05.828968
+ALTER TABLE Book_Shelf ADD user_profile_id INTEGER REFERENCES User_Profile(id) ON DELETE CASCADE;
+timestamp: 2012-06-03T21:19:30.682446
+CREATE TABLE User_Bio(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Favorite_Book CHAR(512),
+    Bio TEXT,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-06-03T22:21:07.240609
+CREATE TABLE User_Bio(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Favorite_Book CHAR(512),
+    Bio TEXT,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+timestamp: 2012-06-03T22:26:50.230622
+CREATE TABLE User_Bio(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Favorite_Book CHAR(512),
+    Bio TEXT,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+timestamp: 2012-06-04T10:30:34.447830
+ALTER TABLE Book_Profile ADD picture CHAR(512);
+timestamp: 2012-06-04T11:08:17.100020
+ALTER TABLE Book_Profile ADD details TEXT;
+timestamp: 2012-06-04T11:47:39.474525
+ALTER TABLE Book_Profile ADD isbn CHAR(512);
+timestamp: 2012-06-04T13:26:30.308832
+ALTER TABLE Book_Profile ADD author_first_name CHAR(512);
+timestamp: 2012-06-04T13:26:30.343979
+ALTER TABLE Book_Profile ADD author_last_name CHAR(512);
+timestamp: 2012-06-04T14:24:12.916870
+CREATE TABLE comment(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Book_Profile_id INTEGER REFERENCES Book_Profile(id) ON DELETE CASCADE,
+    body TEXT,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user(id) ON DELETE CASCADE
+);
+success!

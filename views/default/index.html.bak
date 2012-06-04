@@ -1,0 +1,14 @@
+{{extend 'mylayout.html'}}
+
+{{extend 'layout.html'}}
+
+<h1>Your book shelves!</h1>
+{{if len(shelves):}}
+    {{for shelf in shelves:}}
+        <p>{{=A(shelf.Shelf_Name, _href=URL('book_shelf', args=shelf.id))}}</p>
+    {{pass}}
+    <p>{{=A('Make a book shelf!', _href=URL('create_book_shelf'))}}</p>
+{{else:}}
+    No shelves made
+    {{=A('Make a book shelf!', _href=URL('create_book_shelf'))}}
+{{pass}}

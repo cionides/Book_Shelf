@@ -1,0 +1,81 @@
+{{extend 'mylayout.html'}}
+<div class="left_content">
+
+<div class="title"><span class="title_icon">
+					<img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" />
+					</span>{{=book.Title}}</div>
+					
+	<div class="feat_prod_box_details">					
+
+{{if len(book):}}
+	<div class="prod_img">
+			<a href="{{=URL('book_profile', args=book.id)}}">
+			<img width="100" src="{{=book.Picture and URL('download', args=book.Picture) or URL('static','plugin_layout_book_store/images/dummy_book.png')}}" alt="" title="" border="0" />
+
+			</a>
+		</div>
+        <div class="prod_det_box">
+          	<div class="box_top"></div>
+            <div class="box_center">
+            <div class="prod_title">Details</div>
+            <p class="details">Author: {{=book.Author}}<br /><br />
+            					{{=book.Details}}<br /><br />
+            					Genre: {{=book.Genre}}<br/>
+            					Publisher: {{=book.Publisher}}<br />
+            					Publication Date: {{=book.Publisher_Date}}<br />
+            					</p>
+					
+                    <a href="{{=URL('update_book_profile', args=book.id)}}" class="more">
+                    <img src="{{=URL('static', 'plugin_layout_book_store/images/order_now.gif')}}" alt="" title="" border="0" /></a>
+
+                    <a href="http://www.amazon.com" class="more">
+                    <img src="{{=URL('static', 'plugin_layout_book_store/images/order_now.gif')}}" alt="" title="" border="0" /></a>
+                    
+                    <div class="clear"></div>
+                    </div>
+                    
+                    <div class="box_bottom"></div>
+                </div>  
+
+{{else:}}
+    <p>no profiles that match</p>
+{{pass}}
+    <div class="clear"></div>
+    </div>	
+    
+</div>
+
+<div id ="comments">
+	{{for comment in comments:}}
+	<div>
+		On {{=comment.created_on}}	{{="%(first_name)s %(last_name)s" % comment.created_by}} says:<br/>
+		{{=comment.Body}}
+	</div>
+	{{pass}}
+</div>
+
+<textarea id="newcomment"></textarea>
+<button id = "mybutton">post comment</button>
+
+<script>
+if(typeof(String.prototype.trim) === "undefined"){
+    String.prototype.trim = function() {
+        return String(this).replace(/^\s+|\s+$/g, '');
+    };
+}
+jQuery(function(){
+  jQuery('#mybutton').click(function(){
+	var comment = jQuery('#newcomment').val();
+	if(comment.trim()) {
+	  jQuery.post('{{=URL('post_comment',args=book)}}', 'comment='+encodeURIComponent(comment)).success(function(){
+		jQuery('#comments').append('<div>I say: '+comment+'</div>');
+		jQuery('#newcomment').val('');
+	   }).error(function(){alert('cannot post!');});
+  	};
+  });
+});
+</script>
+
+
+	
+

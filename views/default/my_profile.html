@@ -1,0 +1,55 @@
+{{extend 'mylayout.html'}}
+
+<div class="left_content">
+
+<div class="title"><span class="title_icon">
+					<img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" />
+					</span>My Profile</div>
+
+	<div class="feat_prod_box_details">	
+		<p class="details">
+{{if len(profiles):}}
+    {{for profile in profiles:}}
+	<table>
+	<tr>
+	<td>Name: </td>
+    <td>{{=auth.user.first_name}} {{=auth.user.last_name}}</td>
+	</tr>
+	<tr>
+	<td>Favorite Book: </td>
+    <td>{{=profile.Favorite_Book}}</td>
+	</tr>
+
+	<tr>
+	<td>Bio: </td>
+	<td>{{=profile.Bio}}</td>
+	</tr>
+	</table>
+
+        
+    {{pass}}
+{{else:}}
+{{pass}}
+
+{{=A('Update user bio', _href=URL('update_user_bio', args=auth.user.id))}}
+
+		</p>
+	</div>
+
+<div class="title"><span class="title_icon">
+					<img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" />
+					</span>My Book Shelves</div>
+
+	<div class="feat_prod_box_details">	
+{{if len(shelves):}}
+    {{for shelf in shelves:}}
+        <p>{{=A(shelf.Shelf_Name, _href=URL('book_shelf', args=shelf.id))}}</p>
+    {{pass}}
+    <p>{{=A('Make a book shelf!', _href=URL('create_book_shelf'))}}</p>
+{{else:}}
+    <p>No shelves made<br />
+    {{=A('Make a book shelf!', _href=URL('create_book_shelf'))}}</p>
+{{pass}}
+	</div>
+
+</div>
