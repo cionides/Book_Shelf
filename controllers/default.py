@@ -12,6 +12,18 @@
 def index():
     books = db(db.Book_Profile).select()
     return locals()
+    
+def search():
+	"an ajax wiki search page"
+	return dict(form=FORM(INPUT(_id='keyword',_name='keyword',
+		_onkeyup="ajax('callback', ['keyword'], 'target');")), target_div=DIV(_id='target'))
+
+def callback():
+	"an ajax callback that returns a <ul> of links to wiki pages"
+	query = db.Book_Profile.Title.contains(request.vars.keyword)
+	pages = db(query).select(orderby=db.Book_Profile.Title)
+	links = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in pages] 
+	return UL(*links)
 
 @auth.requires_login()
 def create_user_bio():
@@ -52,6 +64,12 @@ def profiles_list():
     
 def user_profile():
     record = db.auth_user(request.args(0)) or redirect (URL('index'))
+    if auth.user:
+    	if (record.id==auth.user.id):
+    		redirect(URL('my_profile'))
+    person = db.User_Bio.created_by==record.id
+    profiles = db(person).select(db.User_Bio.ALL)
+    shelves = db(db.Book_Shelf.created_by==record.id).select()
     return locals()
 
 @auth.requires_login() 

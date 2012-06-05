@@ -19,19 +19,15 @@
 	<td>Favorite Book: </td>
     <td>{{=profile.Favorite_Book}}</td>
 	</tr>
-
 	<tr>
 	<td>Bio: </td>
 	<td>{{=profile.Bio}}</td>
 	</tr>
-	</table>
-
-        
+	</table>  
     {{pass}}
 {{else:}}
 {{pass}}
-
-{{=A('Update user bio', _href=URL('update_user_bio', args=auth.user.id))}}
+<p>{{=A('Update user bio', _href=URL('update_user_bio', args=auth.user.id))}}</p>
 
 		</p>
 	</div>
