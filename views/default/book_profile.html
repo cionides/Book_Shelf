@@ -53,8 +53,11 @@
 <div class="right_content">
 	<div class="feat_prod_box_details">
 		<div class="feat_prod_box">
-		<textarea id="newcomment"></textarea>
+		{{if (test): }}
+			<textarea id="newcomment"></textarea>
+		
 		<button id = "mybutton">post comment</button>
+		{{pass}}
 		</div>
 <script>
 if(typeof(String.prototype.trim) === "undefined"){
@@ -76,7 +79,7 @@ jQuery(function(){
 </script>
 
 		<div id ="comments">
-	
+		
 			{{for comment in comments:}}
 			<div class="feat_prod_box">
 					</br>

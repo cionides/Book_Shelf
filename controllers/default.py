@@ -103,13 +103,11 @@ def update_book_profile():
       
 def book_profile():
     book = db.Book_Profile(request.args(0)) or redirect (URL('index'))
-    assign = db(db.assign_shelf).select()
-    db.comment.Book_Profile_id.default = book.id
-    comment_form = SQLFORM(db.comment).process()  
-    comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 
     test = False
     if auth.user:
     	test = True
+    	db.comment.Book_Profile_id.default = book.id
+    	comment_form = SQLFORM(db.comment).process()  
     	db.Book_Shelf_Items.Book_Profile_id.default=book.id
     	db.Book_Shelf_Items.Book_Profile_id.writable = False
     	db.Book_Shelf_Items.Book_Profile_id.readable = False
@@ -119,6 +117,7 @@ def book_profile():
         	redirect(URL('book_shelf', args=addItemShelfForm.vars.Book_Shelf_id))
     	else:
         	response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+    comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 
     return locals()
 
 def post_comment():
