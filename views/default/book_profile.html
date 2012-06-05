@@ -1,28 +1,29 @@
 {{extend 'mylayout.html'}}
 <div class="left_content">
 
-<div class="title"><span class="title_icon">
+	<div class="title"><span class="title_icon">
 					<img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" />
 					</span>{{=book.Title}}</div>
 					
 	<div class="feat_prod_box_details">					
 
-{{if len(book):}}
-	<div class="prod_img">
+		{{if len(book):}}
+		<div class="prod_img">
 			<a href="{{=URL('book_profile', args=book.id)}}">
 			<img width="100" src="{{=book.Picture and URL('download', args=book.Picture) or URL('static','plugin_layout_book_store/images/dummy_book.png')}}" alt="" title="" border="0" />
 			</a>
+		</div>
 <!-- 
 			<a>
 			<button id = "add_to_shelf_button"> Add To Shelf </button>
 			</a>
  -->
-		</div>
+		
         <div class="prod_det_box">
           	<div class="box_top"></div>
             <div class="box_center">
-            <div class="prod_title">Details</div>
-            <p class="details">Author: {{=book.Author}}<br /><br />
+            	<div class="prod_title">Details</div>
+            	<p class="details">Author: {{=book.Author}}<br /><br />
             					{{=book.Details}}<br /><br />
             					Genre: {{=book.Genre}}<br/>
             					Publisher: {{=book.Publisher}}<br />
@@ -30,33 +31,33 @@
             					</p>
 					
                     <a href="{{=URL('update_book_profile', args=book.id)}}" class="more">
-                    <button id = "update_button">Update Book Profile </button>
-                   </a>
+                    	<button id = "update_button">Update Book Profile </button>
+                    </a>
 					
                     <a target = "blank" href="http://www.amazon.com" class="more">
-                     <button id = "link_to_buy">Link to Buy</button> 
+                    	<button id = "link_to_buy">Link to Buy</button> 
                     </a>
                 
                     <div class="clear"></div>
-                    </div>
+            </div>
                     
                     <div class="box_bottom"></div>
-                </div>  
+        </div>  
 
-{{else:}}
-    <p>no profiles that match</p>
-{{pass}}
+		{{else:}}
+   			<p>no profiles that match</p>
+		{{pass}}
     <div class="clear"></div>
-    </div>	
-{{=addItemShelfForm}} 
+	</div>	
+	{{=addItemShelfForm}} 
 </div>
 
 <div class="right_content">
-<div class="feat_prod_box_details">
-
-<textarea id="newcomment"></textarea>
-<button id = "mybutton">post comment</button>
-
+	<div class="feat_prod_box_details">
+		<div class="feat_prod_box">
+		<textarea id="newcomment"></textarea>
+		<button id = "mybutton">post comment</button>
+		</div>
 <script>
 if(typeof(String.prototype.trim) === "undefined"){
     String.prototype.trim = function() {
@@ -76,16 +77,25 @@ jQuery(function(){
 });
 </script>
 
-<div id ="comments">
-	{{for comment in comments:}}
-	<div>
-		</br>
-		On {{=comment.created_on.month}}/{{=comment.created_on.day}}/{{=comment.created_on.year}} 
-		At {{=comment.created_on.hour}}:{{=comment.created_on.minute}}:{{=comment.created_on.second}}  
-		   {{="%(first_name)s %(last_name)s" % comment.created_by}} says:<br/>
-		{{=comment.body}}
+		<div id ="comments">
+	
+			{{for comment in comments:}}
+			<div class="feat_prod_box">
+					</br>
+					<div class="prod_det_box">
+						<div class="box_top"></div>
+							<div class="box_center">
+								<div class="prod_title">On {{=comment.created_on.month}}/{{=comment.created_on.day}}/{{=comment.created_on.year}} 
+									At {{=comment.created_on.hour}}:{{=comment.created_on.minute}}:{{=comment.created_on.second}}  
+									{{="%(first_name)s %(last_name)s" % comment.created_by}} says:</div>
+								<p class="details">{{=comment.body}}<br />
+								<div class="clear"></div>
+							</div>
+							<div class="box_bottom"></div>
+					</div>
+					<div class="clear"></div>
+			</div>
+			{{pass}}
+		</div>
 	</div>
-	{{pass}}
-</div>
-</div>
 </div>
