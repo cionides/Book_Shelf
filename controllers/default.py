@@ -107,15 +107,18 @@ def book_profile():
     db.comment.Book_Profile_id.default = book.id
     comment_form = SQLFORM(db.comment).process()  
     comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 
-    db.Book_Shelf_Items.Book_Profile_id.default=book.id
-    db.Book_Shelf_Items.Book_Profile_id.writable = False
-    db.Book_Shelf_Items.Book_Profile_id.readable = False
-    addItemShelfForm = SQLFORM(db.Book_Shelf_Items)  
-    if addItemShelfForm.process().accepted:
-        session.flash = "Form Accepted"
-        redirect(URL('book_shelf', args=addItemShelfForm.vars.Book_Shelf_id))
-    else:
-        response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+    test = False
+    if auth.user:
+    	test = True
+    	db.Book_Shelf_Items.Book_Profile_id.default=book.id
+    	db.Book_Shelf_Items.Book_Profile_id.writable = False
+    	db.Book_Shelf_Items.Book_Profile_id.readable = False
+    	addItemShelfForm = SQLFORM(db.Book_Shelf_Items)  
+    	if addItemShelfForm.process().accepted:
+       		session.flash = "Form Accepted"
+        	redirect(URL('book_shelf', args=addItemShelfForm.vars.Book_Shelf_id))
+    	else:
+        	response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
 
 def post_comment():
