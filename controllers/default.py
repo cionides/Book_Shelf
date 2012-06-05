@@ -111,7 +111,9 @@ def book_profile():
     	db.Book_Shelf_Items.Book_Profile_id.default=book.id
     	db.Book_Shelf_Items.Book_Profile_id.writable = False
     	db.Book_Shelf_Items.Book_Profile_id.readable = False
-    	addItemShelfForm = SQLFORM(db.Book_Shelf_Items)  
+    	authBookshelfItems = db.Book_Shelf_Items.created_by==auth.user.id
+    	addItemShelfForm = SQLFORM(db.Book_Shelf_Items.Book_Shelf_id) 
+    	#addItemShelfForm = SQLFORM(db.Book_Shelf_Items)  
     	if addItemShelfForm.process().accepted:
        		session.flash = "Form Accepted"
         	redirect(URL('book_shelf', args=addItemShelfForm.vars.Book_Shelf_id))
