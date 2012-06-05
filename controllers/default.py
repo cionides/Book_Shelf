@@ -25,10 +25,13 @@ def callback():
     query = request.vars.keyword
     titleResult = db.Book_Profile.Title.contains(query) 
     authorResult = db.Book_Profile.Author.contains(query)
-    titlePages = db(titleResult).select(orderby=db.Book_Profile.Title)
-    authorPages = db(authorResult).select(orderby=db.Book_Profile.Title)
-    titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in titlePages] or [A(p.Title, _href=URL('book_profile',args=p.id)) for p in authorPages]
+    results = db(titleResult).select(orderby=db.Book_Profile.Title) | db(authorResult).select(orderby=db.Book_Profile.Title)
+    titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in results]
     return UL(*titleLinks)
+    
+#    titlePages = db(titleResult).select(orderby=db.Book_Profile.Title)
+#    authorPages = db(authorResult).select(orderby=db.Book_Profile.Title)
+#    titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in titlePages] or [A(p.Title, _href=URL('book_profile',args=p.id)) for p in authorPages]
 
 @auth.requires_login()
 def create_user_bio():
