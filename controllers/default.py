@@ -98,8 +98,8 @@ def book_profile():
     db.comment.Book_Profile_id.default = book.id
     db.comment.Book_Profile_id.readable = False
     db.comment.Book_Profile_id.writable = False
-    comment_form = SQLFORM(db.comment).process()
-    comments = db(db.comment.Book_Profile_id==book.id).select(orderby = db.comment.created_on)
+    comment_form = SQLFORM(db.comment).process()  
+    comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 
     return locals()
 
 def post_comment():

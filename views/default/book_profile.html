@@ -22,15 +22,19 @@
             					{{=book.Details}}<br /><br />
             					Genre: {{=book.Genre}}<br/>
             					Publisher: {{=book.Publisher}}<br />
-            					Publication Date: {{=book.Publisher_Date}}<br />
+            					Publication Date: {{=book.Publication_Date}}<br />
             					</p>
 					
                     <a href="{{=URL('update_book_profile', args=book.id)}}" class="more">
-                    <img src="{{=URL('static', 'plugin_layout_book_store/images/order_now.gif')}}" alt="" title="" border="0" /></a>
-
-                    <a href="http://www.amazon.com" class="more">
-                    <img src="{{=URL('static', 'plugin_layout_book_store/images/order_now.gif')}}" alt="" title="" border="0" /></a>
-                    
+                    <button id = "update_button">Update Book Profile </button>
+                   <!--<img src="{{=URL('static', 'plugin_layout_book_store/images/update.jpeg')}}" alt="" title="" border="0" />-->
+                   </a>
+					
+                    <a target = "blank" href="http://www.amazon.com" class="more">
+                     <button id = "link_to_buy">Link to Buy</button> 
+                   <!-- <img src="{{=URL('static', 'plugin_layout_book_store/images/order_now.gif')}}" alt="" title="" border="0" />-->
+                    </a>
+                
                     <div class="clear"></div>
                     </div>
                     
@@ -45,15 +49,7 @@
     
 </div>
 
-<div id ="comments">
-	{{for comment in comments:}}
-	<div>
-		On {{=comment.created_on}}	{{="%(first_name)s %(last_name)s" % comment.created_by}} says:<br/>
-		{{=comment.body}}
-	</div>
-	{{pass}}
-</div>
-
+<div class="right_content">
 <textarea id="newcomment"></textarea>
 <button id = "mybutton">post comment</button>
 
@@ -75,3 +71,13 @@ jQuery(function(){
   });
 });
 </script>
+
+<div id ="comments">
+	{{for comment in comments:}}
+	<div>
+		On {{=comment.created_on.month + comment.created_on.day}}	{{="%(first_name)s %(last_name)s" % comment.created_by}} says:<br/>
+		{{=comment.body}}
+	</div>
+	{{pass}}
+</div>
+</div>
