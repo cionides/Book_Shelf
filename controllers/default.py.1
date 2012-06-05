@@ -10,36 +10,87 @@
 #########################################################################
 
 def index():
-    shelves = db(db.Book_Shelf.created_by==auth.user.id).select()
+    cr = crud.search(db.Book_Profile.Title)
+    books = db(db.Book_Profile).select()
+    form = FORM(INPUT(_id='keyword',_name='keyword',
+                        _onkeyup="ajax('callback', ['keyword'], 'target');"))
+    target_div=DIV(_id='target')
     return locals()
+    
+def search():
+    "an ajax wiki search page"
+    return dict(form=FORM(INPUT(_id='keyword',_name='keyword',
+        _onkeyup="ajax('callback', ['keyword'], 'target');")), target_div=DIV(_id='target'))
+
+def callback():
+    "an ajax callback that returns a <ul> of links to wiki pages"
+    query = request.vars.keyword
+    titleResult = db.Book_Profile.Title.contains(query) or db.Book_Profile.Author.contains(query)
+    authorResult = db.Book_Profile.Author.contains(query)
+    titlePages = db(titleResult).select(orderby=db.Book_Profile.Title)
+    authorPages = db(authorResult).select(orderby=db.Book_Profile.Title)
+    pages = titlePages + authorsPages
+    titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in titlePages] 
+    authorLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in authorPages] 
+    ul = UL(*titleLinks)
+    apl = UL(*authorLinks)
+    return apl
+    
+
+
+#     
+# def callback():
+#     "an ajax callback that returns a <ul> of links to wiki pages"
+#     query = db.Book_Profile.Title.contains(request.vars.keyword) or db.Book_Profile.Author.contains(request.vars.keyword)
+#     pages = db(query).select(orderby=db.Book_Profile.Title)
+#     links = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in pages] 
+#     return UL(*links)
 
 @auth.requires_login()
-def create_user_profile():
-    form = SQLFORM(db.User_Profile)
+def create_user_bio():
+    record = db(db.User_Bio.created_by==auth.user.id).select()
+    if (record):
+        redirect(URL('update_user_bio', args=auth.user.id))
+    form = SQLFORM(db.User_Bio)
     if form.process().accepted:
         session.flash = "Form Accepted"
-        redirect(URL('user_profile'))
+        redirect(URL('my_profile'))
     else:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
 
 @auth.requires_login() 
-def update_user_profile():
-    record = db.User_Profile(request.args(0)) or redirect (URL('index'))
+def update_user_bio():
+    record = db.User_Bio(created_by=request.args(0)) or redirect(URL('create_user_bio'))
     if (auth.user.id!=record.created_by):
         session.flash = 'access denied'
         redirect(URL('index'))
-    form = SQLFORM(db.User_Profile, record)
+    form = SQLFORM(db.User_Bio, record)
     if form.process().accepted:
         session.flash = "Form Accepted"
-        redirect(URL('user_profile'))
+        redirect(URL('my_profile'))
     else:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
       
 @auth.requires_login() 
+def my_profile():
+    profiles = db(db.User_Bio.created_by==auth.user.id).select()
+    shelves = db(db.Book_Shelf.created_by==auth.user.id).select()
+    return locals()
+
+def profiles_list():
+    profiles = db(db.auth_user).select(orderby=db.auth_user.last_name)
+    return locals()
+    
 def user_profile():
-    profiles = db(db.User_Profile.created_by==auth.user.id).select()
+    record = db.auth_user(request.args(0)) or redirect (URL('index'))
+    if auth.user:
+        if (record.id==auth.user.id):
+            redirect(URL('my_profile'))
+    person = db.User_Bio.created_by==record.id
+    profiles = db(person).select(db.User_Bio.ALL)
+    shelves = db(db.Book_Shelf.created_by==record.id).select()
     return locals()
 
 @auth.requires_login() 
@@ -58,16 +109,27 @@ def update_book_profile():
     form = SQLFORM(db.Book_Profile, record)
     if form.process().accepted:
         session.flash = "Form Accepted"
-        redirect(URL('book_profile'))
+        redirect(URL('book_profile', args=record.id))
     else:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
       
 def book_profile():
     book = db.Book_Profile(request.args(0)) or redirect (URL('index'))
+    db.comment.Book_Profile_id.default = book.id
+    db.comment.Book_Profile_id.readable = False
+    db.comment.Book_Profile_id.writable = False
+    comment_form = SQLFORM(db.comment).process()
+    comments = db(db.comment.Book_Profile_id==book.id).select(orderby = db.comment.created_on)
     return locals()
 
-@auth.requires_login() 
+def post_comment():
+    if request.env.request_method=='POST':
+        db.comment.Book_Profile_id.default = request.args(0)
+        db.comment.insert(body=request.vars.comment)
+    
+
+@auth.requires_login()
 def create_book_shelf():
     form = SQLFORM(db.Book_Shelf)
     if form.process().accepted:
@@ -78,11 +140,21 @@ def create_book_shelf():
 
 @auth.requires_login() 
 def update_book_shelf():
+    ## add book to book shelf
+    record = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
+    db.Book_Shelf_Items.Book_Shelf_id.default = record.id
+    form = SQLFORM(db.Book_Shelf_Items)  
+    if form.process().accepted:
+        session.flash = "Form Accepted"
+        redirect(URL('book_shelf', args=record.id))
+    else:
+        response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
     
 @auth.requires_login()      
 def book_shelf():
     shelf = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
+    books = db(db.Book_Shelf_Items.Book_Shelf_id==request.args(0)).select()
     return locals()
  
 @auth.requires_login()    

@@ -114,6 +114,7 @@ db.Book_Profile.ISBN.requires = IS_NOT_IN_DB(db, db.Book_Profile.ISBN)
 db.Book_Profile.id.readable = db.Book_Profile.id.writable = False  
    
 db.User_Bio.is_active.readable = db.User_Bio.is_active.writable = False
+db.User_Bio.id.readable = db.User_Bio.writable = False
 
 db.Book_Shelf.is_active.readable = db.Book_Shelf.is_active.writable = False
 
