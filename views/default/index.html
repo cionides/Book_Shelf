@@ -2,7 +2,9 @@
 
 <div class="left_content">
 
-<div class="title"><span class="title_icon"><img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" /></span>Books</div>
+<div class="title"><span class="title_icon">
+	<img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" />
+	</span>Books</div>
 
 {{if len(books):}}
 	{{for book in books:}}
@@ -35,7 +37,10 @@
 
 Search for a book:
 <br /> {{=form}}<br />{{=target_div}}
+<br />
+Can't find the book you're looking for? Add it!
+<p><a href="{{=URL('create_book_profile')}}">
+                    <button id = "update_button">Add New Book</button></a></p>
 
-<p>{{=A('Add Book', _href=URL('create_book_profile'))}}</p>
 
 </div>

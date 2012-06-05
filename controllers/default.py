@@ -10,7 +10,7 @@
 #########################################################################
 
 def index():
-    books = db(db.Book_Profile).select()
+    books = db(db.Book_Profile).select(orderby=db.Book_Profile.Title)
     form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'target');"))
     target_div=DIV(_id='target')
     return locals()
@@ -111,14 +111,14 @@ def book_profile():
 def post_comment():
     if request.env.request_method=='POST':
         db.comment.Book_Profile_id.default = request.args(0)
-        db.comment.insert(body=request.vars.comment)
-    
+        db.comment.insert(body=request.vars.comment)   
 
 @auth.requires_login()
 def create_book_shelf():
     form = SQLFORM(db.Book_Shelf)
     if form.process().accepted:
         session.flash = "Form Accepted"
+        redirect(URL('book_shelf',args=form.vars.id))
     else:
         response.flash = "WRONG!"
     return locals()
@@ -140,6 +140,8 @@ def update_book_shelf():
 def book_shelf():
     shelf = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
     books = db(db.Book_Shelf_Items.Book_Shelf_id==request.args(0)).select()
+    form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'target');"))
+    target_div=DIV(_id='target')
     return locals()
  
  	

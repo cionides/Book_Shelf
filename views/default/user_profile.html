@@ -4,60 +4,66 @@
 <div class="left_content">
 
 <div class="title"><span class="title_icon">
-					<img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" />
-					</span>My Profile</div>
+		<img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" />
+	</span>My Bookshelves</div>
+
+	<div class="feat_prod_box_details">	
+		{{if len(shelves):}}
+			{{for shelf in shelves:}}
+				<span class="title_icon">
+					<img src="{{=URL('static', 'plugin_layout_book_store/images/bookshelf.gif')}}" width="25" alt="" title="" />
+				</span>
+				<p>{{=A(shelf.Shelf_Name, _href=URL('book_shelf', args=shelf.id))}}</p>
+			{{pass}}
+		{{else:}}
+			<p>No shelves made<br />
+		{{pass}}
+	</div>
+</div>
+
+<div class="right_content">
+
+	<div class="title"><span class="title_icon">
+		<img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" />
+	</span>User Profile</div>
 
 	<div class="feat_prod_box_details">	
 		<p class="details">
 		
-{{if len(profiles):}}
-    {{for profile in profiles:}}
-	<table>
-	<tr>
-	<td>Name: </td>
-    <td>{{=profile.created_by.first_name}} {{=profile.created_by.last_name}}</td>
-	</tr>
-	<tr>
-	<td>Favorite Book: </td>
-    <td>{{=profile.Favorite_Book}}</td>
-	</tr>
-	<tr>
-	<td>Bio: </td>
-	<td>{{=profile.Bio}}</td>
-	</tr>
-	</table>
-
-    {{pass}}
-{{else:}}
-	<table>
-	<tr>
-	<td>Name: </td>
-    <td>{{=record.first_name}} {{=record.last_name}}</td>
-	</tr>
-	<tr>
-	<td>Favorite Book: </td>
-	</tr>
-	<tr>
-	<td>Bio: </td>
-	</tr>
-	</table>
-{{pass}}
+		{{if len(profiles):}}
+			{{for profile in profiles:}}
+			<table>
+			<tr>
+			<td>Name: </td>
+			<td>{{=profile.created_by.first_name}} {{=profile.created_by.last_name}}</td>
+			</tr>
+			<tr>
+			<td>Favorite Book: </td>
+			<td>{{=profile.Favorite_Book}}</td>
+			</tr>
+			<tr>
+			<td>Bio: </td>
+			<td>{{=profile.Bio}}</td>
+			</tr>
+			</table>
+		
+			{{pass}}
+		{{else:}}
+			<table>
+			<tr>
+			<td>Name: </td>
+			<td>{{=record.first_name}} {{=record.last_name}}</td>
+			</tr>
+			<tr>
+			<td>Favorite Book: </td>
+			</tr>
+			<tr>
+			<td>Bio: </td>
+			</tr>
+			</table>
+		{{pass}}
 
 		</p>
-	</div>
-
-<div class="title"><span class="title_icon">
-					<img src="{{=URL('static', 'plugin_layout_book_store/images/bullet1.gif')}}" alt="" title="" />
-					</span>My Book Shelves</div>
-
-	<div class="feat_prod_box_details">	
-{{if len(shelves):}}
-    {{for shelf in shelves:}}
-        <p>{{=A(shelf.Shelf_Name, _href=URL('book_shelf', args=shelf.id))}}</p>
-    {{pass}}
-{{else:}}
-    <p>No shelves made<br />
-{{pass}}
 	</div>
 
 </div>
