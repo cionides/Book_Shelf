@@ -10,7 +10,6 @@
 #########################################################################
 
 def index():
-    (cr, c) = crud.search(db.Book_Profile)
     books = db(db.Book_Profile).select()
     form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'target');"))
     target_div=DIV(_id='target')
@@ -30,16 +29,6 @@ def callback():
     authorPages = db(authorResult).select(orderby=db.Book_Profile.Title)
     titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in titlePages] or [A(p.Title, _href=URL('book_profile',args=p.id)) for p in authorPages]
     return UL(*titleLinks)
-    
-
-
-#     
-# def callback():
-#     "an ajax callback that returns a <ul> of links to wiki pages"
-#     query = db.Book_Profile.Title.contains(request.vars.keyword) or db.Book_Profile.Author.contains(request.vars.keyword)
-#     pages = db(query).select(orderby=db.Book_Profile.Title)
-#     links = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in pages] 
-#     return UL(*links)
 
 @auth.requires_login()
 def create_user_bio():
