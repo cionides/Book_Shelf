@@ -100,6 +100,7 @@ def update_book_profile():
       
 def book_profile():
     book = db.Book_Profile(request.args(0)) or redirect (URL('index'))
+    assign = db(db.assign_shelf).select()
     db.comment.Book_Profile_id.default = book.id
     db.comment.Book_Profile_id.readable = False
     db.comment.Book_Profile_id.writable = False
@@ -141,15 +142,7 @@ def book_shelf():
     books = db(db.Book_Shelf_Items.Book_Shelf_id==request.args(0)).select()
     return locals()
  
-@auth.requires_login()    
-def comments():
-    return locals()
- 
-@auth.requires_login()    
-def reviews():
-    return locals()
-
-
+ 	
 def user():
     """
     exposes:
