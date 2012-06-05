@@ -81,15 +81,16 @@ def book_profile():
     db.comment.Book_Profile_id.readable = False
     db.comment.Book_Profile_id.writable = False
     comment_form = SQLFORM(db.comment).process()
-    comments = db(db.comment.Book_Profile_id==book).select(orderby = db.comment.created_on)
+    comments = db(db.comment.Book_Profile_id==book.id).select(orderby = db.comment.created_on)
     return locals()
-    
+
 def post_comment():
     if request.env.request_method=='POST':
         db.comment.Book_Profile_id.default = request.args(0)
         db.comment.insert(body=request.vars.comment)
+    
 
-@auth.requires_login() 
+@auth.requires_login()
 def create_book_shelf():
     form = SQLFORM(db.Book_Shelf)
     if form.process().accepted:

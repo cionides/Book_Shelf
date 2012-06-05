@@ -49,7 +49,7 @@
 	{{for comment in comments:}}
 	<div>
 		On {{=comment.created_on}}	{{="%(first_name)s %(last_name)s" % comment.created_by}} says:<br/>
-		{{=comment.Body}}
+		{{=comment.body}}
 	</div>
 	{{pass}}
 </div>
@@ -67,7 +67,7 @@ jQuery(function(){
   jQuery('#mybutton').click(function(){
 	var comment = jQuery('#newcomment').val();
 	if(comment.trim()) {
-	  jQuery.post('{{=URL('post_comment',args=book)}}', 'comment='+encodeURIComponent(comment)).success(function(){
+	  jQuery.post('{{=URL('post_comment',args=book.id)}}', 'comment='+encodeURIComponent(comment)).success(function(){
 		jQuery('#comments').append('<div>I say: '+comment+'</div>');
 		jQuery('#newcomment').val('');
 	   }).error(function(){alert('cannot post!');});
@@ -75,7 +75,3 @@ jQuery(function(){
   });
 });
 </script>
-
-
-	
-
