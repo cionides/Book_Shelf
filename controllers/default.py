@@ -102,10 +102,17 @@ def book_profile():
     book = db.Book_Profile(request.args(0)) or redirect (URL('index'))
     assign = db(db.assign_shelf).select()
     db.comment.Book_Profile_id.default = book.id
-    db.comment.Book_Profile_id.readable = False
-    db.comment.Book_Profile_id.writable = False
     comment_form = SQLFORM(db.comment).process()  
     comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 
+    db.Book_Shelf_Items.Book_Profile_id.default=book.id
+    db.Book_Shelf_Items.Book_Profile_id.writable = False
+    db.Book_Shelf_Items.Book_Profile_id.readable = False
+    addItemShelfForm = SQLFORM(db.Book_Shelf_Items)  
+    if addItemShelfForm.process().accepted:
+        session.flash = "Form Accepted"
+        redirect(URL('book_shelf', args=addItemShelfForm.vars.Book_Shelf_id))
+    else:
+        response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
 
 def post_comment():
@@ -139,12 +146,12 @@ def update_book_shelf():
 @auth.requires_login()      
 def book_shelf():
     shelf = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
-    books = db(db.Book_Shelf_Items.Book_Shelf_id==request.args(0)).select()
-    form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'target');"))
-    target_div=DIV(_id='target')
+    shelfItems = db(db.Book_Shelf_Items.Book_Shelf_id==shelf.id).select()
+    books = [db(db.Book_Profile.id==item.Book_Profile_id).select() for item in shelfItems]
+    form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'dest');"))
+    target_div=DIV(_id='dest')
     return locals()
- 
- 	
+    
 def user():
     """
     exposes:

@@ -12,9 +12,11 @@
 			<a href="{{=URL('book_profile', args=book.id)}}">
 			<img width="100" src="{{=book.Picture and URL('download', args=book.Picture) or URL('static','plugin_layout_book_store/images/dummy_book.png')}}" alt="" title="" border="0" />
 			</a>
+<!-- 
 			<a>
 			<button id = "add_to_shelf_button"> Add To Shelf </button>
 			</a>
+ -->
 		</div>
         <div class="prod_det_box">
           	<div class="box_top"></div>
@@ -46,10 +48,12 @@
 {{pass}}
     <div class="clear"></div>
     </div>	
-    
+{{=addItemShelfForm}} 
 </div>
 
 <div class="right_content">
+<div class="feat_prod_box_details">
+
 <textarea id="newcomment"></textarea>
 <button id = "mybutton">post comment</button>
 
@@ -82,5 +86,6 @@ jQuery(function(){
 		{{=comment.body}}
 	</div>
 	{{pass}}
+</div>
 </div>
 </div>

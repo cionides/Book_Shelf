@@ -124,5 +124,10 @@ db.User_Bio.id.readable = db.User_Bio.writable = False
 db.Book_Shelf.is_active.readable = db.Book_Shelf.is_active.writable = False
 
 db.Book_Shelf_Items.is_active.readable = db.Book_Shelf_Items.is_active.writable = False
-db.Book_Shelf_Items.Book_Shelf_id.writable = db.Book_Shelf_Items.Book_Shelf_id.readable = False
+#db.Book_Shelf_Items.Book_Shelf_id.writable = db.Book_Shelf_Items.Book_Shelf_id.readable = False
+db.Book_Shelf_Items.Book_Shelf_id.requires = IS_IN_DB(db, db.Book_Shelf, '%(Shelf_Name)s')  
+db.Book_Shelf_Items.Book_Profile_id.requires = IS_IN_DB(db, db.Book_Profile, '%(Title)s')
+
+db.comment.Book_Profile_id.readable = db.comment.Book_Profile_id.writable = False
+
 
