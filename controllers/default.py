@@ -28,7 +28,7 @@ def callback():
     titleResult = db.Book_Profile.Title.contains(query) 
     authorResult = db.Book_Profile.Author.contains(query)
     results = db(titleResult).select(orderby=db.Book_Profile.Title) | db(authorResult).select(orderby=db.Book_Profile.Title)
-    titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in results]
+    titleLinks = [A(p.Title+' by '+p.Author, _href=URL('book_profile',args=p.id)) for p in results]
     return UL(*titleLinks)
 
 @auth.requires_login()
