@@ -130,7 +130,8 @@ def post_comment():
     if request.env.request_method=='POST':
         db.comment.Book_Profile_id.default = request.args(0)
         db.comment.insert(body=request.vars.comment)
-        
+
+@auth.requires       
 def delete_shelf():
     db.Book_Shelf.id.default = request.args(0) 
     db(db.Book_Shelf.id==request.args(0)).delete() 
@@ -166,6 +167,9 @@ def update_book_shelf():
 @auth.requires_login()      
 def book_shelf():
     shelf = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
+    test = False
+    if auth.user.id==shelf.created_by:
+		test = True
     shelfItems = db(db.Book_Shelf_Items.Book_Shelf_id==shelf.id).select()
     books = [db(db.Book_Profile.id==item.Book_Profile_id).select() for item in shelfItems]
     form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'dest');"))
