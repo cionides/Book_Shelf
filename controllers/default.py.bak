@@ -60,8 +60,8 @@ def update_user_bio():
       
 @auth.requires_login() 
 def my_profile():
-	if request.args(0):
-		redirect(URL('my_profile'))
+    if request.args(0):
+        redirect(URL('my_profile'))
     profiles = db(db.User_Bio.created_by==auth.user.id).select()
     shelves = db(db.Book_Shelf.created_by==auth.user.id).select()
     return locals()
@@ -147,9 +147,9 @@ def delete_book_from_shelf():
     test = "none"
     books = db(db.Book_Shelf_Items.Book_Profile_id==book.id)(db.Book_Shelf_Items.Book_Shelf_id==shelf.id).select()
     for book in books:
-    	if book.created_by==auth.user.id:
-    		db(db.Book_Shelf_Items.id==book.id).delete()
-	redirect(URL('book_shelf', args=request.args(1)))
+        if book.created_by==auth.user.id:
+            db(db.Book_Shelf_Items.id==book.id).delete()
+    redirect(URL('book_shelf', args=request.args(1)))
 
 @auth.requires_login()
 def create_book_shelf():

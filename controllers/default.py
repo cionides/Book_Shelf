@@ -16,11 +16,6 @@ def index():
     form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'target');"))
     target_div=DIV(_id='target')
     return locals()
-    
-def search():
-    "an ajax wiki search page"
-    return dict(form=FORM(INPUT(_id='keyword',_name='keyword',
-        _onkeyup="ajax('callback', ['keyword'], 'target');")), target_div=DIV(_id='target'))
 
 def callback():
     "an ajax callback that returns a <ul> of links to wiki pages"
