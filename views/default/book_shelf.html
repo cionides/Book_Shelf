@@ -11,9 +11,9 @@
 		<div class="prod_img">
 			<a href="{{=URL('book_profile', args=book[0].id)}}">
 			<img width="100" src="{{=book[0].Picture and URL('download', args=book[0].Picture) or URL('static','plugin_layout_book_store/images/dummy_book.png')}}" alt="" title="" border="0" />
+			<a href="{{=URL('delete_book_from_shelf', args=[book[0].id, shelf.id])}}"><button id = "delete_button">Delete Book</button> </a>
 			</a>
 		</div>
-		
 		<div class="prod_det_box">
 			<div class="box_top"></div>
 			<div class="box_center">
@@ -28,8 +28,13 @@
 	<div class="clear"></div>
 	</div>
 {{pass}}
+<div id="delete" >
 
+<a href="{{=URL('delete_shelf', args=shelf.id)}}"><button id = "delete_button">Delete Shelf</button> </a>
 </div>
+<!--end delete -->
+</div>
+<!-- #end left_content -->
 
 <div class="right_content">
 	<div class="feat_prod_box_details">	
