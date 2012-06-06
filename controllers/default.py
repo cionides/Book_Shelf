@@ -130,9 +130,8 @@ def post_comment():
         db.comment.Book_Profile_id.default = request.args(0)
         db.comment.insert(body=request.vars.comment)
 
-@auth.requires       
+     
 def delete_shelf():
-    db.Book_Shelf.id.default = request.args(0) 
     db(db.Book_Shelf.id==request.args(0)).delete() 
     redirect(URL('my_profile'))
     
