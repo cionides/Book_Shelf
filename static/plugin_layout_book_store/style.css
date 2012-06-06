@@ -203,6 +203,9 @@ padding:10px 0 10px 0;
 margin:0 20px 10px 0;
 clear:both;
 }
+.feat_prod_box_details a{
+color: #4A4A4A;
+}
 .prod_img{
 float:left;
 padding:0 5px 0 0;
@@ -223,6 +226,9 @@ background:url(images/box_top.gif) no-repeat center bottom;
 width:295px;
 height:auto;
 background:url(images/box_center.gif) repeat-y center;
+}
+.box_center a{
+color: #8B5A2B;
 }
 .box_bottom{
 width:295px;
