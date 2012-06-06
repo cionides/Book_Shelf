@@ -10,6 +10,8 @@
 #########################################################################
 
 def index():
+    if request.args(0):
+        redirect(URL('index'))
     books = db(db.Book_Profile).select(orderby=db.Book_Profile.Title)
     form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'target');"))
     target_div=DIV(_id='target')
@@ -135,8 +137,8 @@ def delete_shelf():
     redirect(URL('my_profile'))
     
 def delete_book_from_shelf():
-	db(db.Book_Shelf_Items.Book_Profile_id==request.args(0))(db.Book_Shelf_Items.Book_Shelf_id==request.args(1)).delete()
-	redirect(URL('book_shelf', args=request.args(1)))
+    db(db.Book_Shelf_Items.Book_Profile_id==request.args(0))(db.Book_Shelf_Items.Book_Shelf_id==request.args(1)).delete()
+    redirect(URL('book_shelf', args=request.args(1)))
 
 @auth.requires_login()
 def create_book_shelf():
@@ -169,7 +171,8 @@ def book_shelf():
 		test = True
     shelfItems = db(db.Book_Shelf_Items.Book_Shelf_id==shelf.id).select()
     books = [db(db.Book_Profile.id==item.Book_Profile_id).select() for item in shelfItems]
-    form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'dest');"))
+    call = "ajax('" + URL('callback') + "', ['keyword'], 'dest');"
+    form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup=call))
     target_div=DIV(_id='dest')
     return locals()
     
