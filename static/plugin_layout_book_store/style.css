@@ -7,6 +7,14 @@ font-size:12px;
 margin:0px auto auto auto;
 color:#000000;
 }
+
+h2{
+color:#734633;
+padding:0px;
+float:left;
+font-size:19px;
+margin:10px 0 10px 0;
+}
 a{
 color:#f8981d;
 }
@@ -160,6 +168,7 @@ padding:20px 0 20px 20px;
 }
 
 #comments {
+color: #4A4A4A;
 font-style: italic;
 }
 .title{
