@@ -10,7 +10,8 @@
 <body>
 <div id="wrap">
        <div class="header">
-       		<div class="logo"><a href="index.html"><img src="{{=URL('static', 'plugin_layout_book_store/images/logo.gif')}}" alt="" title="" border="0" /></a></div> 
+       		<div class="logotext">
+       		<a href="index.html">Bookshelf</a></div>
        		<div id="navbar">{{='auth' in globals() and auth.navbar(separators=(' ',' | ',''))}}</div>           
         <div id="menu">
             {{=MENU(response.menu)}}

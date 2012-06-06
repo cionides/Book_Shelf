@@ -48,6 +48,17 @@ background:url(images/header.jpg) no-repeat center;
 .logo{
 padding:50px 0 0 130px;
 }
+.logotext{
+width:100px;
+height:40px;
+padding:50px 0 0 130px;
+font-size:23px;
+}
+.logotext a{
+color:#734633;
+font-family:Myriad Pro;
+text-decoration:none;
+}
 /*-----------------------------menu-------------------*/
 #menu{
 width:628px;
