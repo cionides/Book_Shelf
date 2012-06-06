@@ -7,17 +7,19 @@
 					</span>User Profiles</div>
 					
 	<div class="feat_prod_box_details">	
+	<ul class="list">
 {{if len(profiles):}}
     {{for profile in profiles:}}
     <table>
     	<tr>
-    	<td>{{=A(profile.first_name+ ' ' +profile.last_name, _href=URL('user_profile', args=profile.id))}}</td>
+    	<td>{{=LI(A(profile.first_name+ ' ' +profile.last_name, _href=URL('user_profile', args=profile.id)))}}</td>
     	</tr>
     </table>
     {{pass}}
 {{else:}}
     <p>No users registered</p>
 {{pass}}
+	</ul>
 
 	</div>
 
