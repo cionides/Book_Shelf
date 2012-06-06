@@ -125,18 +125,29 @@ def book_profile():
     comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 
     return locals()
 
+@auth.requires_login()
 def post_comment():
     if request.env.request_method=='POST':
         db.comment.Book_Profile_id.default = request.args(0)
         db.comment.insert(body=request.vars.comment)
    
+@auth.requires_login()
 def delete_shelf():
-    db(db.Book_Shelf.id==request.args(0)).delete() 
+    shelf = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
+    if shelf.created_by==auth.user.id:
+        db(db.Book_Shelf.id==shelf.id).delete()
     redirect(URL('my_profile'))
-    
+ 
+@auth.requires_login()   
 def delete_book_from_shelf():
-    db(db.Book_Shelf_Items.Book_Profile_id==request.args(0))(db.Book_Shelf_Items.Book_Shelf_id==request.args(1)).delete()
-    redirect(URL('book_shelf', args=request.args(1)))
+    book = db.Book_Profile(request.args(0)) or redirect (URL('index'))
+    shelf = db.Book_Shelf(request.args(1)) or redirect (URL('index'))
+    test = "none"
+    books = db(db.Book_Shelf_Items.Book_Profile_id==book.id)(db.Book_Shelf_Items.Book_Shelf_id==shelf.id).select()
+    for book in books:
+    	if book.created_by==auth.user.id:
+    		db(db.Book_Shelf_Items.id==book.id).delete()
+	redirect(URL('book_shelf', args=request.args(1)))
 
 @auth.requires_login()
 def create_book_shelf():
@@ -166,7 +177,7 @@ def book_shelf():
     shelf = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
     test = False
     if auth.user.id==shelf.created_by:
-		test = True
+        test = True
     shelfItems = db(db.Book_Shelf_Items.Book_Shelf_id==shelf.id).select()
     books = [db(db.Book_Profile.id==item.Book_Profile_id).select() for item in shelfItems]
     call = "ajax('" + URL('callback') + "', ['keyword'], 'dest');"

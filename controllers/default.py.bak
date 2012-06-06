@@ -10,9 +10,9 @@
 #########################################################################
 
 def index():
-	if request.args(0):
-		redirect(URL('index'))
-	books = db(db.Book_Profile).select(orderby=db.Book_Profile.Title)
+    if request.args(0):
+        redirect(URL('index'))
+    books = db(db.Book_Profile).select(orderby=db.Book_Profile.Title)
     form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'target');"))
     target_div=DIV(_id='target')
     return locals()
@@ -41,21 +41,21 @@ def create_user_bio():
         session.flash = "Form Accepted"
         redirect(URL('my_profile'))
     elif form.errors:
-        response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+        response.flash= "Form Error. Try Again"
     return locals()
 
 @auth.requires_login() 
 def update_user_bio():
     record = db.User_Bio(created_by=request.args(0)) or redirect(URL('create_user_bio'))
     if (auth.user.id!=record.created_by):
-        session.flash = 'access denied'
+        session.flash = 'Access denied'
         redirect(URL('index'))
     form = SQLFORM(db.User_Bio, record)
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('my_profile'))
     elif form.errors:
-        response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+        response.flash= "Form Error. Try Again"
     return locals()
       
 @auth.requires_login() 
@@ -85,7 +85,7 @@ def create_book_profile():
         session.flash = "Form Accepted"
         redirect(URL('book_profile'))
     elif form.errors:
-        response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+        response.flash= "Form Error. Try Again"
     return locals()
   
 @auth.requires_login() 
@@ -95,8 +95,8 @@ def update_book_profile():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('book_profile', args=record.id))
-    else:
-        response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+    elif form.errors:
+        response.flash= "Form Error. Try Again"
     return locals()
       
 def book_profile():
@@ -121,7 +121,7 @@ def book_profile():
                 session.flash = "Form Accepted"
                 redirect(URL('book_shelf', args=addItemShelfForm.vars.Book_Shelf_id))
         elif addItemShelfForm.errors:
-            response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+            response.flash= "Form Error. Try Again"
     comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 
     return locals()
 
@@ -129,15 +129,20 @@ def post_comment():
     if request.env.request_method=='POST':
         db.comment.Book_Profile_id.default = request.args(0)
         db.comment.insert(body=request.vars.comment)
-        
+   
+@auth.requires_login()
 def delete_shelf():
-    db.Book_Shelf.id.default = request.args(0) 
-    db(db.Book_Shelf.id==request.args(0)).delete() 
+    shelf = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
+    if shelf.created_by==auth.user.id:
+        db(db.Book_Shelf.id==shelf.id).delete()
     redirect(URL('my_profile'))
-    
+ 
+@auth.requires_login()   
 def delete_book_from_shelf():
-	db(db.Book_Shelf_Items.Book_Profile_id==request.args(0))(db.Book_Shelf_Items.Book_Shelf_id==request.args(1)).delete()
-	redirect(URL('book_shelf', args=request.args(1)))
+	book = db.Book_Profile(request.args(0)) or redirect (URL('index'))
+	shelf = db.Book_Shelf(request.args(1)) or redirect (URL('index'))
+    db(db.Book_Shelf_Items.Book_Profile_id==request.args(0))(db.Book_Shelf_Items.Book_Shelf_id==request.args(1)).delete()
+    redirect(URL('book_shelf', args=request.args(1)))
 
 @auth.requires_login()
 def create_book_shelf():
@@ -146,7 +151,7 @@ def create_book_shelf():
         session.flash = "Form Accepted"
         redirect(URL('book_shelf',args=form.vars.id))
     elif form.errors:
-        response.flash = "WRONG!"
+        response.flash = "Form Error. Try Again"
     return locals()
 
 @auth.requires_login() 
@@ -159,15 +164,19 @@ def update_book_shelf():
         session.flash = "Form Accepted"
         redirect(URL('book_shelf', args=record.id))
     elif form.errors:
-        response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+        response.flash= "Form Error. Try Again"
     return locals()
     
 @auth.requires_login()      
 def book_shelf():
     shelf = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
+    test = False
+    if auth.user.id==shelf.created_by:
+        test = True
     shelfItems = db(db.Book_Shelf_Items.Book_Shelf_id==shelf.id).select()
     books = [db(db.Book_Profile.id==item.Book_Profile_id).select() for item in shelfItems]
-    form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'dest');"))
+    call = "ajax('" + URL('callback') + "', ['keyword'], 'dest');"
+    form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup=call))
     target_div=DIV(_id='dest')
     return locals()
     
