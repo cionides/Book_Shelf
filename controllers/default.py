@@ -129,7 +129,16 @@ def book_profile():
 def post_comment():
     if request.env.request_method=='POST':
         db.comment.Book_Profile_id.default = request.args(0)
-        db.comment.insert(body=request.vars.comment)   
+        db.comment.insert(body=request.vars.comment)
+        
+def delete_shelf():
+    db.Book_Shelf.id.default = request.args(0) 
+    db(db.Book_Shelf.id==request.args(0)).delete() 
+    redirect(URL('my_profile'))
+    
+def delete_book_from_shelf():
+	db(db.Book_Shelf_Items.Book_Profile_id==request.args(0))(db.Book_Shelf_Items.Book_Shelf_id==request.args(1)).delete()
+	redirect(URL('book_shelf', args=request.args(1)))
 
 @auth.requires_login()
 def create_book_shelf():

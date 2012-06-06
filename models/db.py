@@ -110,7 +110,7 @@ db.define_table('comment',
     Field('Book_Profile_id', db.Book_Profile),
     Field('body', 'text'),
     auth.signature)
-    
+
 db.Book_Profile.is_active.readable = db.Book_Profile.is_active.writable = False  
 db.Book_Profile.ISBN.requires = IS_NOT_IN_DB(db, db.Book_Profile.ISBN) 
 db.Book_Profile.id.readable = db.Book_Profile.id.writable = False  
