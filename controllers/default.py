@@ -28,10 +28,6 @@ def callback():
     results = db(titleResult).select(orderby=db.Book_Profile.Title) | db(authorResult).select(orderby=db.Book_Profile.Title)
     titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in results]
     return UL(*titleLinks)
-    
-#    titlePages = db(titleResult).select(orderby=db.Book_Profile.Title)
-#    authorPages = db(authorResult).select(orderby=db.Book_Profile.Title)
-#    titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in titlePages] or [A(p.Title, _href=URL('book_profile',args=p.id)) for p in authorPages]
 
 @auth.requires_login()
 def create_user_bio():
@@ -113,14 +109,15 @@ def book_profile():
         db.Book_Shelf_Items.Book_Profile_id.readable = False
         checkBookID = db.Book_Shelf_Items.Book_Profile_id==book.id
         checkAuth = db.Book_Shelf_Items.created_by==auth.user.id
-
-        i = db(db.Book_Shelf.created_by==auth.user.id).select()
-        db.Book_Shelf_Items.Book_Shelf_id.requires = IS_IN_DB(db, db.Book_Shelf, '%(Shelf_Name)s', _and=IS_NOT_IN_DB(db(checkBookID)(checkAuth), db.Book_Shelf_Items.Book_Shelf_id))
+        authUserShelf = db.Book_Shelf.created_by==auth.user.id
+        
+        db.Book_Shelf_Items.Book_Shelf_id.requires = IS_IN_DB(db(authUserShelf), db.Book_Shelf.id, '%(Shelf_Name)s', _and=IS_NOT_IN_DB(db(checkBookID)(checkAuth), db.Book_Shelf_Items.Book_Shelf_id))
 
         addItemShelfForm = SQLFORM(db.Book_Shelf_Items)                 
 
         if addItemShelfForm.process().accepted:
                 session.flash = "Form Accepted"
+                redirect(URL('book_shelf', args=addItemShelfForm.vars.Book_Shelf_id))
         elif addItemShelfForm.errors:
             response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 

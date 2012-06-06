@@ -103,7 +103,7 @@ db.define_table('Book_Shelf_Items',
     Field('Book_Shelf_id', db.Book_Shelf),
     Field('Book_Profile_id', db.Book_Profile),
     auth.signature)
-    
+
 db.define_table('comment',
     Field('Book_Profile_id', db.Book_Profile),
     Field('body', 'text'),
