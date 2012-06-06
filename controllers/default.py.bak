@@ -10,8 +10,7 @@
 #########################################################################
 
 def index():
-    cr = crud.search(db.Book_Profile.Title)
-    books = db(db.Book_Profile).select()
+    books = db(db.Book_Profile).select(orderby=db.Book_Profile.Title)
     form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'target');"))
     target_div=DIV(_id='target')
     return locals()
@@ -24,26 +23,15 @@ def search():
 def callback():
     "an ajax callback that returns a <ul> of links to wiki pages"
     query = request.vars.keyword
-    titleResult = db.Book_Profile.Title.contains(query) or db.Book_Profile.Author.contains(query)
+    titleResult = db.Book_Profile.Title.contains(query) 
     authorResult = db.Book_Profile.Author.contains(query)
-    titlePages = db(titleResult).select(orderby=db.Book_Profile.Title)
-    authorPages = db(authorResult).select(orderby=db.Book_Profile.Title)
-    pages = titlePages + authorsPages
-    titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in titlePages] 
-    authorLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in authorPages] 
-    ul = UL(*titleLinks)
-    apl = UL(*authorLinks)
-    return apl
+    results = db(titleResult).select(orderby=db.Book_Profile.Title) | db(authorResult).select(orderby=db.Book_Profile.Title)
+    titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in results]
+    return UL(*titleLinks)
     
-
-
-#     
-# def callback():
-#     "an ajax callback that returns a <ul> of links to wiki pages"
-#     query = db.Book_Profile.Title.contains(request.vars.keyword) or db.Book_Profile.Author.contains(request.vars.keyword)
-#     pages = db(query).select(orderby=db.Book_Profile.Title)
-#     links = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in pages] 
-#     return UL(*links)
+#    titlePages = db(titleResult).select(orderby=db.Book_Profile.Title)
+#    authorPages = db(authorResult).select(orderby=db.Book_Profile.Title)
+#    titleLinks = [A(p.Title, _href=URL('book_profile',args=p.id)) for p in titlePages] or [A(p.Title, _href=URL('book_profile',args=p.id)) for p in authorPages]
 
 @auth.requires_login()
 def create_user_bio():
@@ -54,7 +42,7 @@ def create_user_bio():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('my_profile'))
-    else:
+    elif form.errors:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
 
@@ -68,7 +56,7 @@ def update_user_bio():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('my_profile'))
-    else:
+    elif form.errors:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
       
@@ -98,7 +86,7 @@ def create_book_profile():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('book_profile'))
-    else:
+    elif form.errors:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
   
@@ -115,25 +103,41 @@ def update_book_profile():
       
 def book_profile():
     book = db.Book_Profile(request.args(0)) or redirect (URL('index'))
-    db.comment.Book_Profile_id.default = book.id
-    db.comment.Book_Profile_id.readable = False
-    db.comment.Book_Profile_id.writable = False
-    comment_form = SQLFORM(db.comment).process()
-    comments = db(db.comment.Book_Profile_id==book.id).select(orderby = db.comment.created_on)
+    test = False
+    if auth.user:
+        test = True
+        db.comment.Book_Profile_id.default = book.id
+        comment_form = SQLFORM(db.comment).process()  
+        db.Book_Shelf_Items.Book_Profile_id.default=book.id
+        db.Book_Shelf_Items.Book_Profile_id.writable = False
+        db.Book_Shelf_Items.Book_Profile_id.readable = False
+        checkBookID = db.Book_Shelf_Items.Book_Profile_id==book.id
+        checkAuth = db.Book_Shelf_Items.created_by==auth.user.id
+
+		i = db(db.Book_Shelf.created_by==auth.user).select()
+        db.Book_Shelf_Items.Book_Shelf_id.requires = IS_IN_DB(db, db.Book_Shelf, '%(Shelf_Name)s', _and=IS_NOT_IN_DB(db(checkBookID)(checkAuth), db.Book_Shelf_Items.Book_Shelf_id))
+
+        addItemShelfForm = SQLFORM(db.Book_Shelf_Items)   				
+
+        if addItemShelfForm.process().accepted:
+        		session.flash = "Form Accepted"
+        elif addItemShelfForm.errors:
+            response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+    comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 
     return locals()
 
 def post_comment():
     if request.env.request_method=='POST':
         db.comment.Book_Profile_id.default = request.args(0)
-        db.comment.insert(body=request.vars.comment)
-    
+        db.comment.insert(body=request.vars.comment)   
 
 @auth.requires_login()
 def create_book_shelf():
     form = SQLFORM(db.Book_Shelf)
     if form.process().accepted:
         session.flash = "Form Accepted"
-    else:
+        redirect(URL('book_shelf',args=form.vars.id))
+    elif form.errors:
         response.flash = "WRONG!"
     return locals()
 
@@ -146,25 +150,19 @@ def update_book_shelf():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('book_shelf', args=record.id))
-    else:
+    elif form.errors:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
     
 @auth.requires_login()      
 def book_shelf():
     shelf = db.Book_Shelf(request.args(0)) or redirect (URL('index'))
-    books = db(db.Book_Shelf_Items.Book_Shelf_id==request.args(0)).select()
+    shelfItems = db(db.Book_Shelf_Items.Book_Shelf_id==shelf.id).select()
+    books = [db(db.Book_Profile.id==item.Book_Profile_id).select() for item in shelfItems]
+    form = FORM(INPUT(_id='keyword',_name='keyword', _onkeyup="ajax('callback', ['keyword'], 'dest');"))
+    target_div=DIV(_id='dest')
     return locals()
- 
-@auth.requires_login()    
-def comments():
-    return locals()
- 
-@auth.requires_login()    
-def reviews():
-    return locals()
-
-
+    
 def user():
     """
     exposes:

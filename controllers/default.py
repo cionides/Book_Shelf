@@ -42,7 +42,7 @@ def create_user_bio():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('my_profile'))
-    else:
+    elif form.errors:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
 
@@ -56,7 +56,7 @@ def update_user_bio():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('my_profile'))
-    else:
+    elif form.errors:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
       
@@ -86,7 +86,7 @@ def create_book_profile():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('book_profile'))
-    else:
+    elif form.errors:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
   
@@ -105,20 +105,24 @@ def book_profile():
     book = db.Book_Profile(request.args(0)) or redirect (URL('index'))
     test = False
     if auth.user:
-    	test = True
-    	db.comment.Book_Profile_id.default = book.id
-    	comment_form = SQLFORM(db.comment).process()  
-    	db.Book_Shelf_Items.Book_Profile_id.default=book.id
-    	db.Book_Shelf_Items.Book_Profile_id.writable = False
-    	db.Book_Shelf_Items.Book_Profile_id.readable = False
-    	authBookshelfItems = db.Book_Shelf_Items.created_by==auth.user.id
-#    	addItemShelfForm = SQLFORM(db.Book_Shelf_Items.Book_Shelf_id) 
-    	addItemShelfForm = SQLFORM(db.Book_Shelf_Items)  
-    	if addItemShelfForm.process().accepted:
-       		session.flash = "Form Accepted"
-        	redirect(URL('book_shelf', args=addItemShelfForm.vars.Book_Shelf_id))
-    	else:
-        	response.flash= "This is completely wrong you weiner..TRY AGAIN!"
+        test = True
+        db.comment.Book_Profile_id.default = book.id
+        comment_form = SQLFORM(db.comment).process()  
+        db.Book_Shelf_Items.Book_Profile_id.default=book.id
+        db.Book_Shelf_Items.Book_Profile_id.writable = False
+        db.Book_Shelf_Items.Book_Profile_id.readable = False
+        checkBookID = db.Book_Shelf_Items.Book_Profile_id==book.id
+        checkAuth = db.Book_Shelf_Items.created_by==auth.user.id
+
+        i = db(db.Book_Shelf.created_by==auth.user.id).select()
+        db.Book_Shelf_Items.Book_Shelf_id.requires = IS_IN_DB(db, db.Book_Shelf, '%(Shelf_Name)s', _and=IS_NOT_IN_DB(db(checkBookID)(checkAuth), db.Book_Shelf_Items.Book_Shelf_id))
+
+        addItemShelfForm = SQLFORM(db.Book_Shelf_Items)                 
+
+        if addItemShelfForm.process().accepted:
+                session.flash = "Form Accepted"
+        elif addItemShelfForm.errors:
+            response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     comments = db(db.comment.Book_Profile_id==book.id).select(orderby =~db.comment.created_on) 
     return locals()
 
@@ -133,7 +137,7 @@ def create_book_shelf():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('book_shelf',args=form.vars.id))
-    else:
+    elif form.errors:
         response.flash = "WRONG!"
     return locals()
 
@@ -146,7 +150,7 @@ def update_book_shelf():
     if form.process().accepted:
         session.flash = "Form Accepted"
         redirect(URL('book_shelf', args=record.id))
-    else:
+    elif form.errors:
         response.flash= "This is completely wrong you weiner..TRY AGAIN!"
     return locals()
     
